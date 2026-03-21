@@ -6,17 +6,11 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private BallSpawner ballSpawner;
 
-    private AudioSource audioSource;
     [SerializeField] private AudioClip shootSound;
 
     private float shootTimer;
 
     float mouseX = 0;
-
-    void Start()
-    {
-        audioSource = GetComponent<AudioSource>();
-    }
 
     void Update()
     {
@@ -52,9 +46,6 @@ public class Player : MonoBehaviour
             ballSpawner
         );
 
-        if (audioSource != null && shootSound != null)
-        {
-            audioSource.PlayOneShot(shootSound, 1.0f);
-        }
+        AudioSource.PlayClipAtPoint(shootSound, Camera.main.transform.position, 1.0f);
     }
 }

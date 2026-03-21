@@ -14,6 +14,8 @@ public class Ball : MonoBehaviour
     private int maxHealth;
     private int sides;
 
+    private int baseStrength;
+
     private SpriteRenderer spriteRenderer;
     private Coroutine damageFlashCoroutine;
 
@@ -29,19 +31,35 @@ public class Ball : MonoBehaviour
     public int Health => health;
     public int MaxHealth => maxHealth;
 
-    public void Initialize(BallType ballType, int resolution, BallSpawner ballSpawner, int hpMult)
+    private AudioClip[] audioClips;
+
+    public void Initialize(BallType ballType, int resolution, BallSpawner ballSpawner, int hpMult, AudioClip[] ballSounds)
     {
         type = ballType;
         spawner = ballSpawner;
 
+        audioClips = ballSounds;
+
         switch (type)
         {
-            case BallType.Dodecagon: sides = 12; color = new Color(1f, 0.5f, 0f);   radius = 1.0f; health = 1 * hpMult;  break;
-            case BallType.Square:    sides = 4;  color = Color.green;               radius = 1.0f; health = 3 * hpMult;  break;
-            case BallType.Pentagon:  sides = 5;  color = new Color(1f, 0.2f, 0.7f); radius = 1.5f; health = 5 * hpMult;  break;
-            case BallType.Octagon:   sides = 8;  color = Color.red;                 radius = 1.5f; health = 8 * hpMult;  break;
-            case BallType.Decagon:   sides = 10; color = Color.yellow;              radius = 1.5f; health = 10 * hpMult; break;
+            default: sides = 12; color = new Color(1f, 0.5f, 0f);   radius = 1.0f; health = 1;  break; // default: dodecagon
+            case BallType.Square:    sides = 4;  color = Color.green;               radius = 1.0f; health = 3;  break;
+            case BallType.Pentagon:  sides = 5;  color = new Color(1f, 0.2f, 0.7f); radius = 1.5f; health = 5;  break;
+            case BallType.Octagon:   sides = 8;  color = Color.red;                 radius = 1.5f; health = 8;  break;
+            case BallType.Decagon:   sides = 10; color = Color.yellow;              radius = 1.5f; health = 10; break;
         }
+        
+       if (health <= 3) {
+            baseStrength = 1;
+        } else if (health <= 8) {
+            baseStrength = 2;
+        } else if (health <= 24) {
+            baseStrength = 3;
+        } else {
+            baseStrength = 4;
+        }
+
+        health = health * hpMult;
         maxHealth = health;
 
         SpriteRenderer sr = gameObject.AddComponent<SpriteRenderer>();
@@ -104,6 +122,12 @@ public class Ball : MonoBehaviour
     {
         health -= damage;
         healthText.text = health.ToString();
+
+        if (health <= 0) {
+            AudioSource.PlayClipAtPoint(audioClips[4 + baseStrength], Camera.main.transform.position, 1.0f);
+        } else {
+            AudioSource.PlayClipAtPoint(audioClips[baseStrength], Camera.main.transform.position, 1.0f);
+        }
 
         // Flash effect
         if (damageFlashCoroutine != null)

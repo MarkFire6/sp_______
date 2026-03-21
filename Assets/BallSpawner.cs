@@ -22,6 +22,8 @@ public class BallSpawner : MonoBehaviour
     [SerializeField] private float xLim = 10f;
     [SerializeField] private float floorHeight = -5f;
 
+    [SerializeField] private AudioClip[] ballSounds;
+
     private float timer;
     private bool isSpawning;
     public List<Ball> balls = new List<Ball>();
@@ -33,19 +35,18 @@ public class BallSpawner : MonoBehaviour
         if (spawnOnStart) StartSpawning();
     }
 
-    void Update()
-    {
-        if (isSpawning)
-        {
-            if (balls.Count <= spawnLimit)
-            {
+    void Update() { // gameplay loop goes here
+        if (isSpawning) {
+            if (balls.Count <= spawnLimit) {
                 timer += Time.deltaTime;
 
-                if (timer >= spawnInterval)
-                {
-                    SpawnBall(defaultBallType);
+                if (timer >= spawnInterval) {
+                    SpawnBall(BallType.Pentagon);
+                    SpawnBall(BallType.Octagon);
                     timer = 0f;
                 }
+            } else {
+                timer = 0f;
             }
         }
 
@@ -66,7 +67,7 @@ public class BallSpawner : MonoBehaviour
         ballObj.transform.position = spawnPos;
 
         Ball ball = ballObj.AddComponent<Ball>();
-        ball.Initialize(type, resolution, this, healthMultiplier);
+        ball.Initialize(type, resolution, this, healthMultiplier, ballSounds);
 
         balls.Add(ball);
         return ballObj;
