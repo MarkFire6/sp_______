@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using System.Runtime.CompilerServices;
 
 public class BallSpawner : MonoBehaviour
 {
@@ -30,31 +32,63 @@ public class BallSpawner : MonoBehaviour
 
     public List<CurrencyDrop> currencyDrops = new List<CurrencyDrop>();
 
+    private List<BallType[]> game = new List<BallType[]>();
+    private int waveIndex = 0;
+
     void Start()
     {
         if (spawnOnStart) StartSpawning();
+
+        // setup gameplay loop
+
+
+        game.Add(new BallType[] { BallType.Dodecagon });
+        game.Add(new BallType[] { BallType.Dodecagon, BallType.Dodecagon });
     }
 
-    void Update() { // gameplay loop goes here
-        if (isSpawning) {
-            if (balls.Count <= spawnLimit) {
-                timer += Time.deltaTime;
-
-                if (timer >= spawnInterval) {
-                    SpawnBall(BallType.Pentagon);
-                    SpawnBall(BallType.Octagon);
-                    timer = 0f;
-                }
-            } else {
-                timer = 0f;
-            }
-        }
-
+    void Update() {
+        // update physics
         foreach (Ball ball in balls)
             ball.UpdatePhysics(Time.deltaTime, gravity, xLim, floorHeight);
 
         foreach (CurrencyDrop drop in currencyDrops)
             drop.UpdatePhysics(Time.deltaTime, gravity, xLim, floorHeight);
+
+        if (isSpawning)
+        {
+            // utilise gameplay loop unless gameplay list is blank
+            StepGameplay(game[waveIndex]);
+        }
+    }
+
+    private void StepGameplay(BallType[] wave)
+    {
+        // if the number of active balls < maximum number of balls then spawn more
+        if (balls.Count <= spawnLimit)
+        {
+            timer += Time.deltaTime;
+
+            if (timer >= spawnInterval)
+            {
+                //loop through array until all balls have been spawned
+                for (int i = 0; i < wave.Length; i++)
+                {
+                    SpawnBall(wave[i]);
+                }
+                timer = 0f;
+
+                waveIndex += 1;
+                if (waveIndex >= game.Count)
+                {
+                    waveIndex = 0;
+                    healthMultiplier += 1;
+                }
+            }
+        }
+        else
+        {
+            timer = 0f;
+        }
     }
 
     public GameObject SpawnBall(BallType type)

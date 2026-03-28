@@ -825,8 +825,8 @@ MonoBehaviour:
   fireRate: 0.5
   lightningDamage: 0
   lightningBounces: 0
-  poisonDamagePerSec: 0
-  poisonDuration: 0
+  poisonDamagePerSec: 5
+  poisonDuration: 2
   currencyMultiplier: 1
 --- !u!4 &1047688741
 Transform:

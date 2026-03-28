@@ -4,6 +4,7 @@ using System.Collections;
 using static UnityEngine.ParticleSystem;
 using System;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 
 public class Ball : MonoBehaviour
 {
@@ -42,11 +43,16 @@ public class Ball : MonoBehaviour
 
         switch (type)
         {
-            default: sides = 12; color = new Color(1f, 0.5f, 0f);   radius = 1.0f; health = 1;  break; // default: dodecagon
-            case BallType.Square:    sides = 4;  color = Color.green;               radius = 1.0f; health = 3;  break;
+            default:                 sides = 12; color = new Color(1f, 0.5f, 0f);   radius = 1.0f; health = 1;  break; // default: dodecagon
+            case BallType.Tetragon:  sides = 4;  color = Color.green;               radius = 1.0f; health = 3;  break;
             case BallType.Pentagon:  sides = 5;  color = new Color(1f, 0.2f, 0.7f); radius = 1.5f; health = 5;  break;
             case BallType.Octagon:   sides = 8;  color = Color.red;                 radius = 1.5f; health = 8;  break;
             case BallType.Decagon:   sides = 10; color = Color.yellow;              radius = 1.5f; health = 10; break;
+            case BallType.Icosagon:  sides = 20; color = new Color(1f, 0.7f, 0.3f); radius = 2.0f; health = 20; break;
+            
+            // bosses
+            case BallType.Hexacontatetragon:   sides = 32;  color = new Color(1f, 0.1f, 0.9f); radius = 3.0f; health = 64;   break;
+            case BallType.Chiliaicositetragon: sides = 128; color = new Color(0.3f, 1f, 1.0f); radius = 4.0f; health = 1028; break;
         }
         
        if (health <= 3) {
@@ -196,11 +202,23 @@ public class Ball : MonoBehaviour
 
         switch (type)
         {
+            default:
+                break; // end instantly
+
             case BallType.Pentagon:
                 for (int i = 0; i < 2; i++) { var b = spawner.SpawnBall(BallType.Dodecagon); b.transform.position = pos; }
                 break;
             case BallType.Octagon:
-                for (int i = 0; i < 2; i++) { var b = spawner.SpawnBall(BallType.Square); b.transform.position = pos; }
+                for (int i = 0; i < 2; i++) { var b = spawner.SpawnBall(BallType.Tetragon); b.transform.position = pos; }
+                break;
+            case BallType.Icosagon:
+                for (int i = 0; i < 2; i++) { var b = spawner.SpawnBall(BallType.Octagon); b.transform.position = pos; }
+                break;
+            case BallType.Hexacontatetragon:
+                for (int i = 0; i < 2; i++) { var b = spawner.SpawnBall(BallType.Icosagon); b.transform.position = pos; }
+                break;
+            case BallType.Chiliaicositetragon:
+                for (int i = 0; i < 2; i++) { var b = spawner.SpawnBall(BallType.Hexacontatetragon); b.transform.position = pos; }
                 break;
         }
 

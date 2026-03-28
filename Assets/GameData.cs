@@ -6,10 +6,13 @@ using System.Linq;
 public enum BallType
 {
     Dodecagon,
-    Square,
+    Tetragon,
     Pentagon,
     Octagon,
-    Decagon
+    Decagon,
+    Icosagon,
+    Hexacontatetragon,
+    Chiliaicositetragon
 }
 
 public enum UpgradeId
