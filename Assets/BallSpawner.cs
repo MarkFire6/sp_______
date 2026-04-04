@@ -7,10 +7,9 @@ public class BallSpawner : MonoBehaviour
 {
     [Header("Spawn Settings")]
     [SerializeField] private float spawnInterval = 1f;
-    [SerializeField] private int spawnLimit = 0;
+    [SerializeField] private int spawnLimit = 1;
     [SerializeField] private int healthMultiplier = 1;
     [SerializeField] private bool spawnOnStart = true;
-    [SerializeField] private BallType defaultBallType = BallType.Dodecagon;
 
     [Header("Spawn Area")]
     [SerializeField] private Vector2 spawnOffset = Vector2.zero;
@@ -44,6 +43,13 @@ public class BallSpawner : MonoBehaviour
 
         game.Add(new BallType[] { BallType.Dodecagon });
         game.Add(new BallType[] { BallType.Dodecagon, BallType.Dodecagon });
+        game.Add(new BallType[] { BallType.Tetragon });
+        game.Add(new BallType[] { BallType.Tetragon, BallType.Dodecagon});
+        game.Add(new BallType[] { BallType.Tetragon, BallType.Tetragon});
+        game.Add(new BallType[] { BallType.Pentagon });
+        game.Add(new BallType[] { BallType.Pentagon, BallType.Tetragon, BallType.Tetragon });
+        game.Add(new BallType[] { BallType.Octagon });
+        game.Add(new BallType[] { BallType.Decagon });
     }
 
     void Update() {
@@ -57,32 +63,57 @@ public class BallSpawner : MonoBehaviour
         if (isSpawning)
         {
             // utilise gameplay loop unless gameplay list is blank
-            StepGameplay(game[waveIndex]);
+            if (game.Count == 0) return;
+
+            // Safety: Only pass the wave if the index is valid.
+            // If waveIndex == game.Count, we pass null or an empty array
+            // because StepGameplay will handle the "CycleComplete" logic anyway.
+            if (waveIndex < game.Count)
+            {
+                StepGameplay(game[waveIndex]);
+            }
+            else
+            {
+                StepGameplay(null); // Triggers the 'isCycleComplete' logic
+            }
         }
     }
 
     private void StepGameplay(BallType[] wave)
     {
-        // if the number of active balls < maximum number of balls then spawn more
-        if (balls.Count <= spawnLimit)
+        // Check if we are currently "waiting" to reset the cycle
+        bool isCycleComplete = (waveIndex >= game.Count);
+
+        if (isCycleComplete)
+        {
+            // WAIT here until the player has cleared enough balls 
+            // to actually allow the NEW spawnLimit to take effect
+            if (balls.Count < spawnLimit)
+            {
+                waveIndex = 0;
+                healthMultiplier += 1;
+                spawnLimit += 1;
+                // The next frame will now proceed to the 'else' block below
+            }
+            return;
+        }
+        
+        // Normal Spawning Logic
+        if (balls.Count < spawnLimit)
         {
             timer += Time.deltaTime;
 
             if (timer >= spawnInterval)
             {
-                //loop through array until all balls have been spawned
                 for (int i = 0; i < wave.Length; i++)
                 {
                     SpawnBall(wave[i]);
                 }
-                timer = 0f;
 
+                timer = 0f;
                 waveIndex += 1;
-                if (waveIndex >= game.Count)
-                {
-                    waveIndex = 0;
-                    healthMultiplier += 1;
-                }
+                // After this, waveIndex might equal game.Count, 
+                // triggering the 'isCycleComplete' check on the next frame.
             }
         }
         else

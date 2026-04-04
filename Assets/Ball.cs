@@ -44,7 +44,7 @@ public class Ball : MonoBehaviour
         switch (type)
         {
             default:                 sides = 12; color = new Color(1f, 0.5f, 0f);   radius = 1.0f; health = 1;  break; // default: dodecagon
-            case BallType.Tetragon:  sides = 4;  color = Color.green;               radius = 1.0f; health = 3;  break;
+            case BallType.Tetragon:  sides = 4;  color = Color.green;               radius = 1.2f; health = 3;  break;
             case BallType.Pentagon:  sides = 5;  color = new Color(1f, 0.2f, 0.7f); radius = 1.5f; health = 5;  break;
             case BallType.Octagon:   sides = 8;  color = Color.red;                 radius = 1.5f; health = 8;  break;
             case BallType.Decagon:   sides = 10; color = Color.yellow;              radius = 1.5f; health = 10; break;

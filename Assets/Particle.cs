@@ -23,7 +23,7 @@ public class Particle : MonoBehaviour
         // Move
         transform.position += (Vector3)velocity * Time.deltaTime;
 
-        velocity = new Vector2(velocity.x, velocity.y - (24f * Time.deltaTime));
+        velocity = new Vector2(velocity.x, velocity.y - (12f * Time.deltaTime));
 
         // Fade out
         float alpha = 1f - (elapsed / lifetime);
