@@ -6,14 +6,21 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private BallSpawner ballSpawner;
 
-    [SerializeField] public int initPlayerHealth = 1;
-    public int playerHealth = 1;
+    [SerializeField] public float initPlayerHealth = 10;
+    
+    public float playerHealth = 10;
+    private float invincibleTimer;
 
     [SerializeField] private AudioClip shootSound;
 
     private float shootTimer;
 
     float mouseX = 0;
+
+    void Start()
+    {
+        ResetPlayer();
+    }
 
     public void ResetPlayer()
     {
@@ -23,6 +30,10 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        if (invincibleTimer > 0)
+        {
+            invincibleTimer -= Time.deltaTime;
+        }
         shootTimer += Time.deltaTime;
 
         if (Input.GetKey(KeyCode.Mouse0))
@@ -41,6 +52,11 @@ public class Player : MonoBehaviour
         pos.x = Mathf.Lerp(pos.x, mouseX, 0.2f);
         pos.y = -6.5f;
         transform.position = pos;
+
+        if (playerHealth <= 0)
+        {
+
+        }
     }
 
     private void Shoot()
@@ -61,9 +77,10 @@ public class Player : MonoBehaviour
     void OnTriggerEnter2D(Collider2D other)
     {
         if (!other.TryGetComponent<Ball>(out Ball ball)) return;
-        {
-            Debug.Log("Pdamage");
-            playerHealth -= 1;
-        }
+        if (invincibleTimer > 0) return;
+        
+        Debug.Log("Pdamage");
+        playerHealth -= 1;
+        invincibleTimer = 1;
     }
 }

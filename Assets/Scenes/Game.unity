@@ -687,8 +687,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Player
   bulletPrefab: {fileID: 6287273828702234544, guid: d6b3b907883f2c54a80b593b13625012, type: 3}
   ballSpawner: {fileID: 977599861}
-  initPlayerHealth: 1
-  playerHealth: 1
+  initPlayerHealth: 10
+  playerHealth: 10
   shootSound: {fileID: 8300000, guid: 9e59394001372934fbaef7f60c018fb3, type: 3}
 --- !u!58 &835157060
 CircleCollider2D:
@@ -851,11 +851,11 @@ MonoBehaviour:
   save:
     currency: 0
   bulletDamage: 1
-  fireRate: 0.5
+  fireRate: 0.05
   lightningDamage: 0
   lightningBounces: 0
-  poisonDamagePerSec: 5
-  poisonDuration: 2
+  poisonDamagePerSec: 0
+  poisonDuration: 0
   currencyMultiplier: 1
 --- !u!4 &1047688741
 Transform:
@@ -1022,7 +1022,7 @@ Transform:
   m_GameObject: {fileID: 1082872220}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
