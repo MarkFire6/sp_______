@@ -50,6 +50,7 @@ public class BallSpawner : MonoBehaviour
         game.Add(new BallType[] { BallType.Pentagon, BallType.Tetragon, BallType.Tetragon });
         game.Add(new BallType[] { BallType.Octagon });
         game.Add(new BallType[] { BallType.Decagon });
+        game.Add(new BallType[] { }); // empty last part
     }
 
     void Update() {
@@ -81,6 +82,13 @@ public class BallSpawner : MonoBehaviour
 
     private void StepGameplay(BallType[] wave)
     {
+        void NextWave()
+        {
+            waveIndex = 0;
+            healthMultiplier += 1;
+            spawnLimit += 1;
+        }
+
         // Check if we are currently "waiting" to reset the cycle
         bool isCycleComplete = (waveIndex >= game.Count);
 
@@ -90,9 +98,7 @@ public class BallSpawner : MonoBehaviour
             // to actually allow the NEW spawnLimit to take effect
             if (balls.Count < spawnLimit)
             {
-                waveIndex = 0;
-                healthMultiplier += 1;
-                spawnLimit += 1;
+                NextWave();
                 // The next frame will now proceed to the 'else' block below
             }
             return;
@@ -105,15 +111,29 @@ public class BallSpawner : MonoBehaviour
 
             if (timer >= spawnInterval)
             {
-                for (int i = 0; i < wave.Length; i++)
-                {
-                    SpawnBall(wave[i]);
-                }
+                if (waveIndex != game.Count - 1) {
+                    for (int i = 0; i < wave.Length; i++)
+                    {
+                        SpawnBall(wave[i]);
+                    }
 
-                timer = 0f;
-                waveIndex += 1;
-                // After this, waveIndex might equal game.Count, 
-                // triggering the 'isCycleComplete' check on the next frame.
+                    timer = 0f;
+                    waveIndex += 1;
+                    // After this, waveIndex might equal game.Count, 
+                    // triggering the 'isCycleComplete' check on the next frame.
+                }
+                else
+                {
+                    switch (healthMultiplier)
+                    {
+                        default: timer = spawnInterval; break;
+                        case >= 32: goto Case3;
+                        case >= 16: Case3: SpawnBall(BallType.Chiliaicositetragon); goto Case2;
+                        case >= 8: Case2: SpawnBall(BallType.Hexacontatetragon); goto Case1;
+                        case >= 4: Case1: SpawnBall(BallType.Icotetrasagon); break;
+                    }
+                    NextWave(); // kind of forgot this needs to be used by every switch
+                }
             }
         }
         else
@@ -146,7 +166,7 @@ public class BallSpawner : MonoBehaviour
     public GameObject SpawnCurrencyDrop(Vector3 position, Vector2 velocity)
     {
         GameObject dropObj = new GameObject("CurrencyDrop");
-        dropObj.transform.position = position;
+        dropObj.transform.position = position + new Vector3(0, 0, 0.5f);
 
         CurrencyDrop drop = dropObj.AddComponent<CurrencyDrop>();
         drop.Initialize(velocity);

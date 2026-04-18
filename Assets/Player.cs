@@ -55,7 +55,7 @@ public class Player : MonoBehaviour
 
         if (playerHealth <= 0)
         {
-
+            Debug.Log("Pdead");
         }
     }
 

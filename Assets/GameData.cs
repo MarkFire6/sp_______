@@ -10,7 +10,7 @@ public enum BallType
     Pentagon,
     Octagon,
     Decagon,
-    Icosagon,
+    Icotetrasagon,
     Hexacontatetragon,
     Chiliaicositetragon
 }
